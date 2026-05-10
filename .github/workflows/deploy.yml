@@ -1,31 +1,23 @@
-# CloudAI SaaS — GitHub Actions CI/CD
-# 文件位置: .github/workflows/deploy.yml
-# 触发条件: push to main 或 PR to main
-
 name: Deploy to Cloudflare
 
 on:
   push:
-    branches: [main]
-  pull_request:
     branches: [main]
 
 jobs:
   deploy-backend:
     name: Deploy Worker API
     runs-on: ubuntu-latest
-    # PR 只预览，不部署到生产
-    if: github.event_name == 'push'
     defaults:
       run:
         working-directory: backend
-    
+
     steps:
       - uses: actions/checkout@v4
 
       - uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: "20"
 
       - name: Install dependencies
         run: npm ci
@@ -44,45 +36,13 @@ jobs:
   deploy-frontend:
     name: Deploy Pages Frontend
     runs-on: ubuntu-latest
-    if: github.event_name == 'push'
-    defaults:
-      run:
-        working-directory: frontend
 
     steps:
       - uses: actions/checkout@v4
-
-      # 如果有构建步骤（如 npm run build），取消下面注释
-      # - uses: actions/setup-node@v4
-      #   with:
-      #     node-version: '20'
-      # - run: npm ci
-      # - run: npm run build
 
       - name: Deploy Pages
         uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          command: pages deploy . --project-name=cloudai-frontend
-          workingDirectory: frontend
-
-  # D1 Schema 迁移（手动触发）
-  migrate-db:
-    name: D1 Schema Migration
-    runs-on: ubuntu-latest
-    if: github.event_name == 'push' && contains(github.event.commits[0].message, '[migrate]')
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Run D1 Migration
-        uses: cloudflare/wrangler-action@v3
-        with:
-          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          command: d1 execute cloudai-db --remote --file=backend/schema.sql
-
-# ===== 需要在 GitHub 仓库设置的 Secrets =====
-# Settings → Secrets and variables → Actions → New repository secret
-# CLOUDFLARE_API_TOKEN    — 你的 Cloudflare API Token
-# CLOUDFLARE_ACCOUNT_ID   — d2d41ded86ff91577381172b129a5021
+          command: pages deploy frontend --project-name=cloudai-frontend
