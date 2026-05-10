@@ -1,12 +1,13 @@
--- CloudAI SaaS 核心表结构
--- Phase 3: 数据层初始化
+-- CloudAI SaaS Phase 5: Auth + Streaming + Payments
 
--- 用户表
+-- 用户表（增加 password_hash, stripe_customer_id）
 CREATE TABLE IF NOT EXISTS users (
   id TEXT PRIMARY KEY,
   email TEXT UNIQUE NOT NULL,
+  password_hash TEXT NOT NULL,
   name TEXT,
   plan TEXT DEFAULT 'free',
+  stripe_customer_id TEXT,
   created_at INTEGER DEFAULT (unixepoch()),
   updated_at INTEGER DEFAULT (unixepoch())
 );
@@ -54,6 +55,19 @@ CREATE TABLE IF NOT EXISTS api_keys (
   created_at INTEGER DEFAULT (unixepoch())
 );
 
--- 插入测试用户
-INSERT OR IGNORE INTO users (id, email, name, plan) VALUES
-  ('demo-user-001', 'demo@cloudai.dev', 'Demo User', 'pro');
+-- 订阅/支付记录
+CREATE TABLE IF NOT EXISTS subscriptions (
+  id TEXT PRIMARY KEY,
+  user_id TEXT NOT NULL REFERENCES users(id),
+  stripe_session_id TEXT,
+  stripe_customer_id TEXT,
+  plan TEXT NOT NULL DEFAULT 'free',
+  status TEXT DEFAULT 'active',
+  current_period_start INTEGER,
+  current_period_end INTEGER,
+  created_at INTEGER DEFAULT (unixepoch())
+);
+
+-- 插入测试用户（密码: demo123）
+INSERT OR IGNORE INTO users (id, email, password_hash, name, plan) VALUES
+  ('demo-user-001', 'demo@cloudai.dev', 'a]6e01a0b56c357c4e0a5e6f0b5d8e2f8c1e3b5a7d9f1e2c4b6a8d0e2f4c6b8', 'Demo User', 'pro');

@@ -7,6 +7,11 @@ compatibility_flags = ["nodejs_compat"]
 ENVIRONMENT = "production"
 APP_NAME = "CloudAI"
 
+# Secrets (set via: wrangler secret put <NAME>)
+# JWT_SECRET — JWT signing key
+# STRIPE_SECRET_KEY — Stripe API key (sk_test_...)
+# STRIPE_WEBHOOK_SECRET — Stripe webhook signing secret (whsec_...)
+
 # AI binding - Workers AI
 [ai]
 binding = "AI"
