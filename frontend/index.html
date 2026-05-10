@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CloudAI — 边缘 AI 助手平台</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #0a0a0a; color: #fff; }
+    .hero { min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 2rem; background: radial-gradient(ellipse at top, #1a1a2e 0%, #0a0a0a 70%); }
+    .hero h1 { font-size: 4rem; margin-bottom: 1rem; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .hero p { font-size: 1.25rem; color: #888; max-width: 600px; margin-bottom: 2rem; line-height: 1.8; }
+    .hero .badge { display: inline-block; padding: 0.5rem 1rem; border-radius: 9999px; background: rgba(102,126,234,0.1); border: 1px solid rgba(102,126,234,0.3); color: #667eea; font-size: 0.875rem; margin-bottom: 2rem; }
+    .cta { display: flex; gap: 1rem; }
+    .cta a { padding: 0.875rem 2rem; border-radius: 0.5rem; text-decoration: none; font-weight: 600; transition: all 0.2s; }
+    .cta .primary { background: linear-gradient(135deg, #667eea, #764ba2); color: #fff; }
+    .cta .primary:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(102,126,234,0.4); }
+    .cta .secondary { border: 1px solid #333; color: #fff; }
+    .cta .secondary:hover { border-color: #667eea; }
+    .features { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 2rem; max-width: 1000px; margin: 0 auto; padding: 4rem 2rem; }
+    .feature { padding: 2rem; border-radius: 1rem; background: #111; border: 1px solid #222; }
+    .feature h3 { margin-bottom: 0.75rem; color: #667eea; }
+    .feature p { color: #888; line-height: 1.6; }
+    .status { text-align: center; padding: 2rem; color: #666; font-size: 0.875rem; }
+    .status a { color: #667eea; text-decoration: none; }
+    .chat-demo { max-width: 500px; margin: 2rem auto; background: #111; border-radius: 1rem; border: 1px solid #222; overflow: hidden; }
+    .chat-header { padding: 1rem; background: #1a1a2e; border-bottom: 1px solid #222; font-weight: 600; }
+    .chat-body { padding: 1rem; min-height: 200px; max-height: 300px; overflow-y: auto; }
+    .msg { margin-bottom: 0.75rem; padding: 0.75rem 1rem; border-radius: 0.5rem; max-width: 80%; line-height: 1.5; font-size: 0.9rem; }
+    .msg.user { background: #1a1a2e; margin-left: auto; text-align: right; }
+    .msg.ai { background: #1e293b; }
+    .chat-input { display: flex; padding: 1rem; gap: 0.5rem; border-top: 1px solid #222; }
+    .chat-input input { flex: 1; padding: 0.75rem 1rem; border-radius: 0.5rem; border: 1px solid #333; background: #0a0a0a; color: #fff; outline: none; }
+    .chat-input button { padding: 0.75rem 1.5rem; border-radius: 0.5rem; border: none; background: linear-gradient(135deg, #667eea, #764ba2); color: #fff; cursor: pointer; font-weight: 600; }
+  </style>
+</head>
+<body>
+  <div class="hero">
+    <span class="badge">🚀 Powered by Cloudflare Workers AI</span>
+    <h1>CloudAI</h1>
+    <p>基于 Cloudflare 边缘网络构建的 AI 助手平台。全球 300+ 节点，亚 50ms 延迟，Serverless 架构无限扩展。</p>
+    <div class="cta">
+      <a href="#demo" class="primary">立即体验</a>
+      <a href="https://github.com" class="secondary">GitHub</a>
+    </div>
+  </div>
+
+  <div id="demo" class="chat-demo">
+    <div class="chat-header">💬 AI Chat Demo</div>
+    <div class="chat-body" id="chatBody">
+      <div class="msg ai">你好！我是 CloudAI 助手，基于 Cloudflare Workers AI 运行。有什么可以帮你的？</div>
+    </div>
+    <div class="chat-input">
+      <input type="text" id="chatInput" placeholder="输入消息..." onkeypress="if(event.key==='Enter')sendMsg()">
+      <button onclick="sendMsg()">发送</button>
+    </div>
+  </div>
+
+  <div class="features">
+    <div class="feature">
+      <h3>⚡ 边缘推理</h3>
+      <p>AI 模型运行在 Cloudflare 全球 300+ 边缘节点，冷启动 &lt;5ms，用户就近访问延迟极低。</p>
+    </div>
+    <div class="feature">
+      <h3>💰 按量付费</h3>
+      <p>Serverless 架构，只为实际使用付费。MVP 阶段月费 $0，10K 用户仅 $100-200。</p>
+    </div>
+    <div class="feature">
+      <h3>🔒 企业级安全</h3>
+      <p>内置 WAF、DDoS 防护、Bot Management。Cloudflare 安全能力免费包含在所有计划中。</p>
+    </div>
+  </div>
+
+  <div class="status">
+    <p>Deployed on <a href="https://pages.cloudflare.com">Cloudflare Pages</a> | Built with 💜 by CloudAI Team</p>
+    <p style="margin-top:0.5rem;">Phase 1 — Frontend Deployment ✅</p>
+  </div>
+
+  <script>
+    async function sendMsg() {
+      const input = document.getElementById('chatInput');
+      const body = document.getElementById('chatBody');
+      const msg = input.value.trim();
+      if (!msg) return;
+      body.innerHTML += '<div class="msg user">' + msg + '</div>';
+      input.value = '';
+      try {
+        const res = await fetch('/api/chat', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ message: msg })
+        });
+        const data = await res.json();
+        body.innerHTML += '<div class="msg ai">' + (data.response || data.error || '...') + '</div>';
+      } catch(e) {
+        body.innerHTML += '<div class="msg ai">（API 尚未部署，将在 Phase 2 接入 Workers AI）</div>';
+      }
+      body.scrollTop = body.scrollHeight;
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,28 @@
+name = "cloudai-api"
+main = "src/index.ts"
+compatibility_date = "2024-12-01"
+compatibility_flags = ["nodejs_compat"]
+
+[vars]
+ENVIRONMENT = "production"
+APP_NAME = "CloudAI"
+
+# AI binding - Workers AI
+[ai]
+binding = "AI"
+
+# D1 数据库
+[[d1_databases]]
+binding = "DB"
+database_name = "cloudai-db"
+database_id = "1336e026-051f-49aa-b958-14c24aa5a83f"
+
+# KV 缓存
+[[kv_namespaces]]
+binding = "CACHE"
+id = "2efd26a054504bf38dd051114e1f7aeb"
+
+# Vectorize 向量数据库
+[[vectorize]]
+binding = "VECTORIZE"
+index_name = "cloudai-embeddings"
